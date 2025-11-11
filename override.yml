@@ -1,0 +1,10 @@
+services:
+  codemate_web:
+    ports:
+      - target: 80
+        published: 8085
+        mode: host
+
+  codemate_db:
+    ports:
+      - "54323:5432"
