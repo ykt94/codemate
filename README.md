@@ -1,59 +1,95 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## **Тестовое задание**
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### **Приложение для работы с балансом пользователей (PHP / Laravel)**
 
-## About Laravel
+### **Описание задачи**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Нужно реализовать небольшое приложение на Laravel, которое позволяет управлять балансом пользователей:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- зачислять средства,
+- списывать средства,
+- переводить деньги между пользователями,
+- получать текущий баланс.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Все данные должны храниться в базе данных PostgreSQL.  
+Взаимодействие с приложением должно происходить через HTTP API (JSON-запросы и ответы).
 
-## Learning Laravel
+**Основной функционал**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+#### **1\. Начисление средств пользователю**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+POST /api/deposit
 
-## Laravel Sponsors
+{
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+"user_id": 1,
 
-### Premium Partners
+"amount": 500.00,
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+"comment": "Пополнение через карту"
 
-## Contributing
+}
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### **2\. Списание средств**
 
-## Code of Conduct
+POST /api/withdraw
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+{
 
-## Security Vulnerabilities
+"user_id": 1,
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+"amount": 200.00,
 
-## License
+"comment": "Покупка подписки"
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+}
+
+Баланс не может уходить в минус.
+
+#### **3\. Перевод между пользователями**
+
+POST /api/transfer
+
+{
+
+"from_user_id": 1,
+
+"to_user_id": 2,
+
+"amount": 150.00,
+
+"comment": "Перевод другу"
+
+}
+
+#### **4\. Получение баланса пользователя**
+
+GET /api/balance/{user_id}
+
+{
+
+"user_id": 1,
+
+"balance": 350.00
+
+}
+
+###
+
+### **Требования**
+
+- Проект должен быть выполнен на PHP 8+.
+- Хранение данных - в PostgreSQL.
+- Выложить проект на гитхаб с Readme
+- Приложение должно быть развернуто в докере
+- Все денежные операции должны выполняться в транзакциях.
+- Баланс не может быть отрицательным.
+- Если у пользователя нет записи о балансе - она создаётся при первом пополнении.
+- Все ответы и ошибки должны быть в формате JSON, с корректными HTTP-кодами.
+    - 200 - успешный ответ
+    - 400 / 422 - ошибки валидации
+    - 404 - пользователь не найден
+    - 409 - конфликт (например, недостаточно средств)
+- Транзакция имеет следующие статусы: deposit, withdraw, transfer_in, transfer_out
+
+\* Будет плюсом покрытие кода тестами
