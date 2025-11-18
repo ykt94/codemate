@@ -10,3 +10,6 @@ Route::post('/transfer', [BalanceController::class, 'transfer']);
 Route::get('/balance/{user_id}', [UserController::class, 'balance']);
 
 
+
+Route::get('/', [UserController::class, 'index']);
+
